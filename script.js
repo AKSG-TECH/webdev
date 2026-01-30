@@ -64,7 +64,6 @@
       }
     });
   }
-
   // Close nav with Escape key when open
   window.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape' && nav && nav.classList.contains('open')){
@@ -77,22 +76,6 @@
     }
   });
 
-  // Hide toggle on desktop via CSS/JS when resizing
-  function setToggleVisibility(){
-    const isDesktop = window.matchMedia('(min-width:768px)').matches;
-    if(isDesktop){
-      if(navToggle){ navToggle.style.display = 'none'; navToggle.setAttribute('aria-hidden','true'); }
-      nav && nav.classList.remove('open');
-      navLinks && navLinks.setAttribute('aria-hidden','false');
-      document.body.classList.remove('nav-open');
-      navBackdrop.classList.remove('visible');
-    } else {
-      if(navToggle){ navToggle.style.display = ''; navToggle.setAttribute('aria-hidden','false'); }
-    }
-  }
-  setToggleVisibility();
-  window.addEventListener('resize', setToggleVisibility);
-
   // Convert card-level .show-prompt elements into real links to the post
   document.querySelectorAll('.cards-grid .show-prompt').forEach(el => {
     const card = el.closest('.card');
@@ -100,8 +83,7 @@
     if(target && target.href){
       // Make it a proper link so middle-click / Ctrl+click works for new tab
       el.setAttribute('href', target.getAttribute('href'));
-      // Ensure it behaves like a link even if it's an anchor without href in markup
-      el.addEventListener('click', ()=>{});
+      // No extra click handler needed — native link behavior suffices
     }
   });
 
@@ -154,15 +136,7 @@
   });
   window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && activeCategory){ clearCategoryFilter(); } });
 
-  // Simple search filter (client-side demo)
-  const searchBtn = document.getElementById('searchBtn');
-  searchBtn && searchBtn.addEventListener('click', ()=>{
-    const q = document.getElementById('searchInput').value.toLowerCase().trim();
-    document.querySelectorAll('.card').forEach(card=>{
-      const title = card.querySelector('.card-title').textContent.toLowerCase();
-      card.style.display = title.includes(q) || q === '' ? '' : 'none';
-    });
-  });
+  // Simple search filter removed — not used in current markup
 
   // Copy prompt buttons (cards and post pages)
   document.querySelectorAll('.copy-prompt').forEach(btn => {
