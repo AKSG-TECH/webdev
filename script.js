@@ -45,8 +45,20 @@
 
 
 
-  // Lazy-loading enhancement with IntersectionObserver
+  // Lazy-loading enhancement with IntersectionObserver and skeleton loading
   const lazyImages = document.querySelectorAll('img.lazy');
+  
+  // Initialize skeleton loaders for all lazy images
+  lazyImages.forEach(img => {
+    const thumb = img.closest('.thumb');
+    if(thumb && !thumb.querySelector('.skeleton-loader')){
+      const skeleton = document.createElement('div');
+      skeleton.className = 'skeleton-loader';
+      thumb.appendChild(skeleton);
+    }
+    img.style.opacity = '0';
+  });
+  
   if('IntersectionObserver' in window){
     const io = new IntersectionObserver((entries, obs)=>{
       entries.forEach(entry=>{
@@ -54,51 +66,42 @@
           const img = entry.target;
           const thumb = img.closest('.thumb');
           
-          // Add skeleton loader to thumb
-          if(thumb && !thumb.querySelector('.skeleton-loader')){
-            const skeleton = document.createElement('div');
-            skeleton.className = 'skeleton-loader';
-            skeleton.style.position = 'absolute';
-            skeleton.style.inset = '0';
-            skeleton.style.zIndex = '1';
-            thumb.style.position = 'relative';
-            thumb.appendChild(skeleton);
-          }
-          
-          // Add loading class to image
-          img.classList.add('loading');
-          
           // Set image source
           img.src = img.dataset.src;
-          img.classList.remove('lazy');
+          img.classList.add('loading');
           obs.unobserve(img);
           
           // Remove skeleton and fade in image when loaded
           img.addEventListener('load', ()=> {
-            if(thumb){
-              const skeleton = thumb.querySelector('.skeleton-loader');
-              if(skeleton) skeleton.remove();
-            }
+            const skeleton = thumb ? thumb.querySelector('.skeleton-loader') : null;
+            if(skeleton) skeleton.style.display = 'none';
             img.classList.remove('loading');
+            img.classList.remove('lazy');
             img.style.opacity = '1';
             img.style.transition = 'opacity 0.3s ease-in';
           });
           
-          // Fallback: remove skeleton after 3 seconds even if image fails
+          // Fallback: remove skeleton and show image after 2.5 seconds
           setTimeout(() => {
-            if(thumb){
-              const skeleton = thumb.querySelector('.skeleton-loader');
-              if(skeleton) skeleton.remove();
+            if(img.src && img.dataset.src){
+              const skeleton = thumb ? thumb.querySelector('.skeleton-loader') : null;
+              if(skeleton) skeleton.style.display = 'none';
+              img.classList.remove('loading');
+              img.style.opacity = '1';
             }
-            img.classList.remove('loading');
-          }, 3000);
+          }, 2500);
         }
       })
-    }, {rootMargin:'100px'});
-    lazyImages.forEach(img=>{ img.style.opacity=0; io.observe(img); });
+    }, {rootMargin:'150px'});
+    lazyImages.forEach(img => io.observe(img));
   } else {
-    // fallback
-    lazyImages.forEach(img=> img.src = img.dataset.src);
+    // fallback without IntersectionObserver
+    lazyImages.forEach(img => {
+      img.src = img.dataset.src;
+      img.style.opacity = '1';
+      const skeleton = img.closest('.thumb')?.querySelector('.skeleton-loader');
+      if(skeleton) skeleton.style.display = 'none';
+    });
   }
 
   // Card category filter (click badge to filter / click again to clear)
