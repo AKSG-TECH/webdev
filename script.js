@@ -31,6 +31,21 @@
     });
   }
 
+  // Create backdrop element for mobile nav and streamline open/close
+  let navBackdrop = document.createElement('div');
+  navBackdrop.className = 'nav-backdrop';
+  navBackdrop.addEventListener('click', ()=>{
+    // close nav when clicking backdrop
+    if(!nav) return;
+    nav.classList.remove('open');
+    navToggle && navToggle.setAttribute('aria-expanded', 'false');
+    navLinks && navLinks.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('nav-open');
+    navBackdrop.classList.remove('visible');
+    navToggle && navToggle.focus();
+  });
+  document.body.appendChild(navBackdrop);
+
   // Toggle navigation menu with ARIA updates and body scroll lock
   if(navToggle && nav){
     navToggle.setAttribute('aria-expanded', 'false');
@@ -40,12 +55,43 @@
       navToggle.setAttribute('aria-expanded', String(willOpen));
       navLinks && navLinks.setAttribute('aria-hidden', String(!willOpen));
       document.body.classList.toggle('nav-open', willOpen);
+      navBackdrop.classList.toggle('visible', willOpen);
       if(willOpen){
         const first = navLinks && navLinks.querySelector('a');
         first && first.focus();
+      } else {
+        navToggle && navToggle.focus();
       }
     });
   }
+
+  // Close nav with Escape key when open
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && nav && nav.classList.contains('open')){
+      nav.classList.remove('open');
+      navToggle && navToggle.setAttribute('aria-expanded', 'false');
+      navLinks && navLinks.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('nav-open');
+      navBackdrop.classList.remove('visible');
+      navToggle && navToggle.focus();
+    }
+  });
+
+  // Hide toggle on desktop via CSS/JS when resizing
+  function setToggleVisibility(){
+    const isDesktop = window.matchMedia('(min-width:768px)').matches;
+    if(isDesktop){
+      if(navToggle){ navToggle.style.display = 'none'; navToggle.setAttribute('aria-hidden','true'); }
+      nav && nav.classList.remove('open');
+      navLinks && navLinks.setAttribute('aria-hidden','false');
+      document.body.classList.remove('nav-open');
+      navBackdrop.classList.remove('visible');
+    } else {
+      if(navToggle){ navToggle.style.display = ''; navToggle.setAttribute('aria-hidden','false'); }
+    }
+  }
+  setToggleVisibility();
+  window.addEventListener('resize', setToggleVisibility);
 
   // Convert card-level .show-prompt elements into real links to the post
   document.querySelectorAll('.cards-grid .show-prompt').forEach(el => {
