@@ -171,3 +171,19 @@ body.nav-open{overflow:hidden}
 .nav-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);z-index:50;opacity:0;pointer-events:none;transition:opacity 320ms cubic-bezier(.22,.9,.1,1)}
 .nav-backdrop.visible{opacity:1;pointer-events:auto}
 
+/* Skeleton loading effect for images */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.skeleton-loader{
+  background: linear-gradient(90deg, #e6e6e6 25%, #f0f0f0 50%, #e6e6e6 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 8px;
+}
+.thumb img.loading{
+  background-color: #f0f0f0;
+  opacity: 0.1;
+}
+

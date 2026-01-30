@@ -51,8 +51,47 @@
     const io = new IntersectionObserver((entries, obs)=>{
       entries.forEach(entry=>{
         if(entry.isIntersecting){
-          const img = entry.target; img.src = img.dataset.src; img.classList.remove('lazy'); obs.unobserve(img);
-          img.addEventListener('load', ()=> img.style.opacity = 1);
+          const img = entry.target;
+          const thumb = img.closest('.thumb');
+          
+          // Add skeleton loader to thumb
+          if(thumb && !thumb.querySelector('.skeleton-loader')){
+            const skeleton = document.createElement('div');
+            skeleton.className = 'skeleton-loader';
+            skeleton.style.position = 'absolute';
+            skeleton.style.inset = '0';
+            skeleton.style.zIndex = '1';
+            thumb.style.position = 'relative';
+            thumb.appendChild(skeleton);
+          }
+          
+          // Add loading class to image
+          img.classList.add('loading');
+          
+          // Set image source
+          img.src = img.dataset.src;
+          img.classList.remove('lazy');
+          obs.unobserve(img);
+          
+          // Remove skeleton and fade in image when loaded
+          img.addEventListener('load', ()=> {
+            if(thumb){
+              const skeleton = thumb.querySelector('.skeleton-loader');
+              if(skeleton) skeleton.remove();
+            }
+            img.classList.remove('loading');
+            img.style.opacity = '1';
+            img.style.transition = 'opacity 0.3s ease-in';
+          });
+          
+          // Fallback: remove skeleton after 3 seconds even if image fails
+          setTimeout(() => {
+            if(thumb){
+              const skeleton = thumb.querySelector('.skeleton-loader');
+              if(skeleton) skeleton.remove();
+            }
+            img.classList.remove('loading');
+          }, 3000);
         }
       })
     }, {rootMargin:'100px'});
