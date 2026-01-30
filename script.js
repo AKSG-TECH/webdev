@@ -3,29 +3,47 @@
   // (theme colors now always use default variables from :root)  
 
   const nav = document.querySelector('.nav');
-  if(nav){
+  const navLinks = nav ? nav.querySelector('.nav-links') : null;
+  const navToggle = document.querySelector('.nav-toggle');
+
+  if(nav && navLinks){
+    // start closed for screen readers
+    navLinks.setAttribute('aria-hidden', 'true');
+
     // Add click feedback and slight delay before navigating so users see the pressed state
-    nav.querySelectorAll('.nav-links a').forEach(link=>{
+    navLinks.querySelectorAll('a').forEach(link=>{
       link.addEventListener('click', (e)=>{
         e.preventDefault();
         const href = link.getAttribute('href');
         link.classList.add('clicked');
-        nav.classList.remove('open'); // Close menu on link click
+        // Close menu with animation and update accessibility attributes
+        nav.classList.remove('open');
+        if(navToggle) navToggle.setAttribute('aria-expanded', 'false');
+        navLinks.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('nav-open');
         if(href && href !== '#'){
-          setTimeout(()=> { window.location.href = href; }, 140);
+          setTimeout(()=> { window.location.href = href; }, 260);
         } else {
-          setTimeout(()=> link.classList.remove('clicked'), 260);
+          setTimeout(()=> link.classList.remove('clicked'), 320);
         }
       });
       link.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); link.click(); } });
     });
   }
 
-  // Toggle navigation menu
-  const navToggle = document.querySelector('.nav-toggle');
+  // Toggle navigation menu with ARIA updates and body scroll lock
   if(navToggle && nav){
+    navToggle.setAttribute('aria-expanded', 'false');
     navToggle.addEventListener('click', () => {
-      nav.classList.toggle('open');
+      const willOpen = !nav.classList.contains('open');
+      nav.classList.toggle('open', willOpen);
+      navToggle.setAttribute('aria-expanded', String(willOpen));
+      navLinks && navLinks.setAttribute('aria-hidden', String(!willOpen));
+      document.body.classList.toggle('nav-open', willOpen);
+      if(willOpen){
+        const first = navLinks && navLinks.querySelector('a');
+        first && first.focus();
+      }
     });
   }
 
