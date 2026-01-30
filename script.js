@@ -4,11 +4,10 @@
 
   const nav = document.querySelector('.nav');
   const navLinks = nav ? nav.querySelector('.nav-links') : null;
-  const navToggle = document.querySelector('.nav-toggle');
 
   if(nav && navLinks){
     // start closed for screen readers
-    navLinks.setAttribute('aria-hidden', 'true');
+    navLinks.setAttribute('aria-hidden', 'false');
 
     // Add click feedback and slight delay before navigating so users see the pressed state
     navLinks.querySelectorAll('a').forEach(link=>{
@@ -18,10 +17,7 @@
         link.classList.add('clicked');
         // Close menu with animation and update accessibility attributes
         nav.classList.remove('open');
-        if(navToggle) navToggle.setAttribute('aria-expanded', 'false');
-        navLinks.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('nav-open');
-        if(href && href !== '#'){
+        if(navLinks) navLinks.setAttribute('aria-hidden', 'false');
           setTimeout(()=> { window.location.href = href; }, 260);
         } else {
           setTimeout(()=> link.classList.remove('clicked'), 320);
@@ -31,50 +27,7 @@
     });
   }
 
-  // Create backdrop element for mobile nav and streamline open/close
-  let navBackdrop = document.createElement('div');
-  navBackdrop.className = 'nav-backdrop';
-  navBackdrop.addEventListener('click', ()=>{
-    // close nav when clicking backdrop
-    if(!nav) return;
-    nav.classList.remove('open');
-    navToggle && navToggle.setAttribute('aria-expanded', 'false');
-    navLinks && navLinks.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('nav-open');
-    navBackdrop.classList.remove('visible');
-    navToggle && navToggle.focus();
-  });
-  document.body.appendChild(navBackdrop);
-
-  // Toggle navigation menu with ARIA updates and body scroll lock
-  if(navToggle && nav){
-    navToggle.setAttribute('aria-expanded', 'false');
-    navToggle.addEventListener('click', () => {
-      const willOpen = !nav.classList.contains('open');
-      nav.classList.toggle('open', willOpen);
-      navToggle.setAttribute('aria-expanded', String(willOpen));
-      navLinks && navLinks.setAttribute('aria-hidden', String(!willOpen));
-      document.body.classList.toggle('nav-open', willOpen);
-      navBackdrop.classList.toggle('visible', willOpen);
-      if(willOpen){
-        const first = navLinks && navLinks.querySelector('a');
-        first && first.focus();
-      } else {
-        navToggle && navToggle.focus();
-      }
-    });
-  }
-  // Close nav with Escape key when open
-  window.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && nav && nav.classList.contains('open')){
-      nav.classList.remove('open');
-      navToggle && navToggle.setAttribute('aria-expanded', 'false');
-      navLinks && navLinks.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('nav-open');
-      navBackdrop.classList.remove('visible');
-      navToggle && navToggle.focus();
-    }
-  });
+  // Mobile nav toggle removed — navigation always visible
 
   // Convert card-level .show-prompt elements into real links to the post
   document.querySelectorAll('.cards-grid .show-prompt').forEach(el => {

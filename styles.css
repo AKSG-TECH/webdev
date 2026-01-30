@@ -31,13 +31,13 @@ a{color:inherit;text-decoration:none}
 .logo strong{color:var(--accent)}
 
 .nav{display:flex;align-items:center;gap:12px;position:relative}
-.nav .nav-toggle{position:relative;z-index:70;width:24px;height:24px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;justify-content:space-around;padding:0}
+.nav .nav-toggle{position:relative;z-index:70;width:24px;height:24px;background:none;border:none;cursor:pointer;display:none;flex-direction:column;justify-content:space-around;padding:0}
 .nav .nav-toggle span{width:100%;height:2px;background:var(--muted);border-radius:1px;transition:transform 0.3s ease, opacity 0.3s ease}
 .nav.open .nav-toggle span:nth-child(1){transform:rotate(45deg) translate(5px, 5px)}
 .nav.open .nav-toggle span:nth-child(2){opacity:0}
 .nav.open .nav-toggle span:nth-child(3){transform:rotate(-45deg) translate(7px, -6px)}
-.nav-links{display:flex;list-style:none;margin:0;padding:0;gap:12px;flex-direction:row;flex-wrap:wrap;position:fixed;top:0;right:0;left:auto;width:min(92%,360px);height:100%;background:var(--card);z-index:60;transform:translateX(100%);transition:transform 320ms cubic-bezier(.22,.9,.1,1);justify-content:center;align-items:center;flex-direction:column;pointer-events:none;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:0 12px 12px 0;box-shadow:-8px 0 30px rgba(2,6,23,0.08)}
-.nav.open .nav-links{transform:translateX(0);pointer-events:auto}
+.nav-links{display:flex;list-style:none;margin:0;padding:0;gap:12px;flex-direction:row;flex-wrap:wrap;position:static;top:0;right:0;left:auto;width:auto;height:auto;background:transparent;z-index:60;transform:none;transition:none;justify-content:flex-start;align-items:center;flex-direction:row;pointer-events:auto;overflow:visible;-webkit-overflow-scrolling:auto;border-radius:0;box-shadow:none}
+.nav.open .nav-links{transform:none;pointer-events:auto}
 .nav-links li a{padding:10px 12px;border-radius:8px;color:var(--muted);font-weight:600}
 
 .socials .icon{font-size:18px;padding:6px}
@@ -121,7 +121,7 @@ a{color:inherit;text-decoration:none}
 
 /* Responsive rules */
 @media(min-width:768px){
-  .nav-links{display:flex;position:static;transform:none;width:auto;height:auto;background:transparent;z-index:auto;flex-direction:column;pointer-events:auto}
+  .nav-links{display:flex;position:static;transform:none;width:auto;height:auto;background:transparent;z-index:auto;flex-direction:row;pointer-events:auto}
   .nav-toggle{display:none}
   .nav-actions{display:flex}
 }
